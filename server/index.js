@@ -15,7 +15,7 @@ const app = express();
 
 // Set up CORS
 app.use(cors({
-  origin: [process.env.CORS_ORIGIN, "http://localhost:3000"], // Fetch from environment
+  origin: [process.env.CORS_ORIGIN, "https://capstone-frontend-5ide.onrender.com"], // Fetch from environment
   credentials: true,
 }));
 
