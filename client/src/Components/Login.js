@@ -39,9 +39,6 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      if (loading) setMessage("Waking up server, please wait...");
-    }, 10000);
 
     try {
       const response = await fetch(GRAPHQL_URL, {
