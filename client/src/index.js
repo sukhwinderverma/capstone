@@ -3,19 +3,27 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'; // Import Apollo Client
+import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, ApolloLink } from '@apollo/client'; 
 
-// Set up Apollo Client
 const client = new ApolloClient({
-  // uri: 'http://localhost:4005/graphql',
-uri: 'https://capstone-server2-2qh1.onrender.com',
 
+  link: ApolloLink.from([
+    new HttpLink({
+      uri: 'https://capstone-server2-2qh1.onrender.com/graphql',  
+      credentials: 'include',  
+    }),
+  ]),
   cache: new InMemoryCache(),
+  headers: {
+ 
+    Authorization: `Bearer ${localStorage.getItem('authToken')}`, 
+  },
 });
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ApolloProvider client={client}> {/* Wrap your app with ApolloProvider */}
+  <ApolloProvider client={client}> 
     <BrowserRouter>
       <App />
     </BrowserRouter>
