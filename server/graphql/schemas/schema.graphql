@@ -57,6 +57,12 @@ type PaginatedUsers {
   currentPage: Int!
 }
 
+type PaginatedJobListings {
+  jobListings: [JobListing]!
+  totalPages: Int!
+  currentPage: Int!
+}
+
 type AuthResponse {
   message: String!
   user: User
@@ -119,14 +125,14 @@ type Query {
   users(page: Int, limit: Int): PaginatedUsers
   getUserJobs: [JobListing]
   getJobListingsByEmail(email: String!): [JobListing]
-  getJobListingsByUserId(userId: ID!): [JobListing] # Added query to fetch job posts by userId
+  getJobListingsByUserId(userId: ID!): [JobListing]
   getEmployerProfileByEmail(email: String!): EmployerProfile
   getJobSeekerProfileByEmail(email: String!): JobSeekerProfile
   getAllJobApplications: [JobApplication]
   getJobApplicationsByJobSeekerEmail(email: String!): [JobApplication]
   verifyUser(fullName: String!, email: String!): VerifyResponse
   getJobDetails(id: ID!): JobListing
-  getJobListings(page: Int, limit: Int): [JobListing]
+  getJobListings(page: Int, limit: Int, email: String): PaginatedJobListings
 }
 
 type Mutation {
