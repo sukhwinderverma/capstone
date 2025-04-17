@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 export default function JobSeekerProfile() {
   const [user, setUser] = useState(null);
   const [firstName, setFirstName] = useState('');
@@ -117,7 +119,7 @@ export default function JobSeekerProfile() {
   const fetchUserProfile = async (email) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4005/graphql', {
+      const response = await fetch(GRAPHQL_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -186,7 +188,7 @@ export default function JobSeekerProfile() {
     setLoading(true);
     try {
       let query = '';
-      const emailExistsResponse = await fetch('http://localhost:4005/graphql', {
+      const emailExistsResponse = await fetch(GRAPHQL_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -244,9 +246,9 @@ export default function JobSeekerProfile() {
         `;
       }
 
-      const response = await fetch("http://localhost:4005/graphql", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch(GRAPHQL_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       });
 
