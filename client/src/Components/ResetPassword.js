@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 function ResetPassword() {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -35,7 +37,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await fetch('http://localhost:4005/graphql', {
+      const response = await fetch(GRAPHQL_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
