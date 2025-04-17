@@ -10,7 +10,6 @@ import cors from "cors";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-
 app.use(cors({
   origin: "https://capstone-frontend-5ide.onrender.com",
   credentials: true,
@@ -27,12 +26,13 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => ({ headers: req.headers }),
+  cache: "bounded"
 });
 
 await server.start();
 server.applyMiddleware({ app, path: "/graphql" });
 
 const port = process.env.PORT || 4005;
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 GraphQL Server is running at http://localhost:${port}${server.graphqlPath}`);
 });
