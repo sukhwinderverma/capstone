@@ -4,22 +4,23 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const config = {
   entry: "./src/index.js",
   output: {
-    path: path.resolve(__dirname, "public"),
+    path: path.resolve(__dirname, "dist"),
+    filename: "main.js",
     publicPath: "/",
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, "public"),
+      directory: path.join(__dirname, "dist"),
     },
     proxy: [
       {
         context: ["/api"],
-        target: "http://localhost:4005", // server port
+        target: "http://localhost:4005",
         pathRewrite: { "^/api": "" },
       },
     ],
     open: true,
-    port: 3006, // client port
+    port: 3006,
     host: "0.0.0.0",
     historyApiFallback: { index: "index.html" },
   },
@@ -41,13 +42,13 @@ const config = {
     ],
   },
   resolve: {
-    extensions: [".js", ".jsx"], // Add support for JSX files
+    extensions: [".js", ".jsx"],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: "ExploreKWC",
       template: "template_index.html",
-      filename: "./index.html",
+      filename: "index.html",
     }),
   ],
   mode: "development",
