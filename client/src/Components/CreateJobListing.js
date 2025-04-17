@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress, Snackbar, Grid, Paper, List, ListItem, ListItemText, IconButton, Tooltip } from '@mui/material';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery, ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
+const client = new ApolloClient({
+  uri: GRAPHQL_URL,
+  cache: new InMemoryCache(),
+});
 
 const GET_JOB_LISTINGS_BY_EMAIL = gql`
   query GetJobListingsByEmail($email: String!) {
@@ -114,24 +121,28 @@ export default function CreateJobListing() {
 
   const { loading: queryLoading, error: queryError, data: queryData, refetch } = useQuery(GET_JOB_LISTINGS_BY_EMAIL, {
     variables: { email: user?.email },
+    client,
   });
 
   const [createJobListing, { loading: createLoading }] = useMutation(CREATE_JOB_LISTING, {
     onCompleted: () => {
       refetch();
-    }
+    },
+    client,
   });
 
   const [deleteJobListing] = useMutation(DELETE_JOB_LISTING, {
     onCompleted: () => {
       refetch();
-    }
+    },
+    client,
   });
 
   const [updateJobListing, { loading: updateLoading }] = useMutation(UPDATE_JOB_LISTING, {
     onCompleted: () => {
       refetch();
-    }
+    },
+    client,
   });
 
   useEffect(() => {
@@ -213,8 +224,6 @@ export default function CreateJobListing() {
     return valid;
   };
   
-  
-
   const clearFormFields = () => {
     setJobTitle('');
     setCompanyName('');
@@ -311,146 +320,157 @@ export default function CreateJobListing() {
   const filteredJobs = queryData?.getJobListingsByEmail || [];
 
   return (
-    <Box sx={{ padding: 4, backgroundColor: '#f9f9f9', borderRadius: 2, boxShadow: 3 }}>
-      <Typography variant="h4" sx={{ marginBottom: 3, color: '#333', textAlign: 'center' }}>
-        {editingJob ? 'Edit Job Listing' : 'Create Job Listing'}
-      </Typography>
+    <ApolloProvider client={client}>
+      <Box sx={{ padding: 4, backgroundColor: '#f9f9f9', borderRadius: 2, boxShadow: 3 }}>
+        <Typography variant="h4" sx={{ marginBottom: 3, color: '#333', textAlign: 'center' }}>
+          {editingJob ? 'Edit Job Listing' : 'Create Job Listing'}
+        </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Job Title"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          value={jobTitle}
-          onChange={(e) => setJobTitle(e.target.value)}
-          error={!!errors.jobTitle}
-          helperText={errors.jobTitle}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Email"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          value={user ? user.email : email}
-          InputProps={{ readOnly: true }}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Company Name"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          error={!!errors.companyName}
-          helperText={errors.companyName}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Job Description"
-          fullWidth
-          multiline
-          rows={4}
-          margin="normal"
-          variant="outlined"
-          value={jobDescription}
-          onChange={(e) => setJobDescription(e.target.value)}
-          error={!!errors.jobDescription}
-          helperText={errors.jobDescription}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Start Date"
-          type="date"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          error={!!errors.startDate}
-          helperText={errors.startDate}
-          InputLabelProps={{ shrink: true }}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="End Date"
-          type="date"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          error={!!errors.endDate}
-          helperText={errors.endDate}
-          InputLabelProps={{ shrink: true }}
-          sx={{ marginBottom: 2 }}
-        />
-        <FormControl fullWidth margin="normal" sx={{ marginBottom: 2 }}>
-          <InputLabel>Job Type</InputLabel>
-          <Select value={jobType} onChange={(e) => setJobType(e.target.value)} label="Job Type">
-            <MenuItem value="Full-Time">Full-Time</MenuItem>
-            <MenuItem value="Part-Time">Part-Time</MenuItem>
-            <MenuItem value="Freelance">Freelance</MenuItem>
-          </Select>
-        </FormControl>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Job Title"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={jobTitle}
+            onChange={(e) => setJobTitle(e.target.value)}
+            error={!!errors.jobTitle}
+            helperText={errors.jobTitle}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Email"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={user ? user.email : email}
+            InputProps={{ readOnly: true }}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Company Name"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            error={!!errors.companyName}
+            helperText={errors.companyName}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Job Description"
+            fullWidth
+            multiline
+            rows={4}
+            margin="normal"
+            variant="outlined"
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            error={!!errors.jobDescription}
+            helperText={errors.jobDescription}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Start Date"
+            type="date"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            error={!!errors.startDate}
+            helperText={errors.startDate}
+            InputLabelProps={{ shrink: true }}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="End Date"
+            type="date"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            error={!!errors.endDate}
+            helperText={errors.endDate}
+            InputLabelProps={{ shrink: true }}
+            sx={{ marginBottom: 2 }}
+          />
+          <FormControl fullWidth margin="normal" sx={{ marginBottom: 2 }}>
+            <InputLabel>Job Type</InputLabel>
+            <Select
+              value={jobType}
+              onChange={(e) => setJobType(e.target.value)}
+              label="Job Type"
+            >
+              <MenuItem value="Full-Time">Full-Time</MenuItem>
+              <MenuItem value="Part-Time">Part-Time</MenuItem>
+              <MenuItem value="Contract">Contract</MenuItem>
+            </Select>
+          </FormControl>
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ marginTop: 3 }}
-          disabled={createLoading || updateLoading}
-        >
-          {createLoading || updateLoading ? <CircularProgress size={24} /> : editingJob ? 'Update Job Listing' : 'Create Job Listing'}
-        </Button>
-      </form>
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+            {editingJob ? 'Update Job Listing' : 'Create Job Listing'}
+          </Button>
+        </form>
 
-      {successMessage && <Typography sx={{ marginTop: 2, color: 'green', textAlign: 'center' }}>{successMessage}</Typography>}
+        {editingJob && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            sx={{ marginTop: 2 }}
+            onClick={() => setEditingJob(null)}
+          >
+            Cancel Edit
+          </Button>
+        )}
 
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={successMessage}
-      />
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={successMessage}
+        />
 
-      <Grid container spacing={2} sx={{ marginTop: 4 }}>
-        {filteredJobs.length > 0 ? (
-          <Grid item xs={12}>
-            <Paper sx={{ padding: 2 }}>
-              <List>
-                {filteredJobs.map((job) => (
-                  <ListItem key={job.id} sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: '#f4f4f9', borderRadius: 1, marginBottom: 1 }}>
-                    <ListItemText
-                      primary={job.jobTitle}
-                      secondary={`${job.companyName} - ${job.jobType} - ${getJobStatus(job.endDate)}`}
-                    />
-                    <Box>
-                      <Tooltip title="Edit Job Listing">
-                        <IconButton onClick={() => setEditingJob(job)} sx={{ color: 'blue', '&:hover': { color: 'darkblue' } }}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Job Listing">
-                        <IconButton onClick={() => handleDelete(job.id)} sx={{ color: 'red', '&:hover': { color: 'darkred' } }}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
+        <Typography variant="h5" sx={{ marginTop: 4, marginBottom: 2 }}>
+          Job Listings
+        </Typography>
+
+        {filteredJobs.length === 0 ? (
+          <Typography>No job listings found</Typography>
         ) : (
-          <Grid item xs={12}>
-            <Typography>No job listings available.</Typography>
+          <Grid container spacing={2}>
+            {filteredJobs.map((job) => (
+              <Grid item xs={12} sm={6} md={4} key={job.id}>
+                <Paper sx={{ padding: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {job.jobTitle}
+                  </Typography>
+                  <Typography>{job.companyName}</Typography>
+                  <Typography>{job.jobDescription}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {getJobStatus(job.endDate)}
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                    <Tooltip title="Edit">
+                      <IconButton onClick={() => setEditingJob(job)}>
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton onClick={() => handleDelete(job.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
         )}
-      </Grid>
-    </Box>
+      </Box>
+    </ApolloProvider>
   );
 }
