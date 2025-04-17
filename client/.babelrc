@@ -1,0 +1,7 @@
+{
+    "presets": [
+      "@babel/preset-react",  //to convert es6 to es5 for old browser
+      "@babel/preset-env"    // to traslate jsx to js
+    ]
+  }
+  

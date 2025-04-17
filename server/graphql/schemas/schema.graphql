@@ -1,0 +1,222 @@
+type JobSeekerProfile {
+  id: ID!
+  name: String!
+  email: String!
+  mobile: String
+  gender: String
+  address: String
+  nationality: String
+  languages: String
+  experience: [Experience]
+  education: [Education]
+}
+
+type EmployerProfile {
+  id: ID!
+  employerName: String!
+  companyName: String!
+  aboutCompany: String!
+  companyStartDate: String!
+  location: String!
+  employerEmail: String!
+}
+
+type JobListing {
+  id: ID!
+  jobTitle: String!
+  companyName: String!
+  jobDescription: String!
+  startDate: String!
+  endDate: String!
+  jobType: String!
+  userId: ID!
+  email: String!
+}
+
+type JobApplication {
+  id: ID!
+  jobSeekerEmail: String!
+  employerEmail: String!
+  jobId: ID!
+  appliedAt: String!
+  job: JobListing
+  jobSeekerProfile: JobSeekerProfile
+}
+
+type User {
+  id: ID!
+  fullName: String!
+  email: String!
+  userType: String!
+  blocked: Boolean!
+}
+
+type PaginatedUsers {
+  users: [User]!
+  totalPages: Int!
+  currentPage: Int!
+}
+
+type AuthResponse {
+  message: String!
+  user: User
+}
+
+type VerifyResponse {
+  success: Boolean!
+  message: String!
+}
+
+type ResetResponse {
+  success: Boolean!
+  message: String!
+}
+
+type Experience {
+  startDate: String
+  endDate: String
+  jobTitle: String
+  companyName: String
+  description: String
+}
+
+type Education {
+  degree: String
+  institution: String
+  startDate: String
+  endDate: String
+  description: String
+}
+
+type JobApplicationResponse {
+  success: Boolean!
+  message: String!
+}
+
+input ExperienceInput {
+  startDate: String
+  endDate: String
+  jobTitle: String
+  companyName: String
+  description: String
+}
+
+input EducationInput {
+  degree: String
+  institution: String
+  startDate: String
+  endDate: String
+  description: String
+}
+
+input JobApplicationInput {
+  jobSeekerEmail: String!
+  employerEmail: String!
+  jobId: ID!
+}
+
+type Query {
+  users(page: Int, limit: Int): PaginatedUsers
+  getUserJobs: [JobListing]
+  getJobListingsByEmail(email: String!): [JobListing]
+  getJobListingsByUserId(userId: ID!): [JobListing] # Added query to fetch job posts by userId
+  getEmployerProfileByEmail(email: String!): EmployerProfile
+  getJobSeekerProfileByEmail(email: String!): JobSeekerProfile
+  getAllJobApplications: [JobApplication]
+  getJobApplicationsByJobSeekerEmail(email: String!): [JobApplication]
+  verifyUser(fullName: String!, email: String!): VerifyResponse
+  getJobDetails(id: ID!): JobListing
+  getJobListings(page: Int, limit: Int): [JobListing]
+}
+
+type Mutation {
+  signup(
+    fullName: String!
+    email: String!
+    password: String!
+    userType: String!
+  ): User
+
+  login(
+    email: String!
+    password: String!
+  ): AuthResponse
+
+  resetPassword(
+    email: String!
+    newPassword: String!
+  ): ResetResponse
+
+  blockUser(id: ID!): User
+
+  createJobSeekerProfile(
+    name: String!
+    email: String!
+    mobile: String
+    gender: String
+    address: String
+    nationality: String
+    languages: String
+    experience: [ExperienceInput]
+    education: [EducationInput]
+  ): JobSeekerProfile
+
+  updateJobSeekerProfile(
+    id: ID!
+    name: String
+    email: String
+    mobile: String
+    gender: String
+    address: String
+    nationality: String
+    languages: String
+    experience: [ExperienceInput]
+    education: [EducationInput]
+  ): JobSeekerProfile
+
+  createEmployerProfile(
+    employerName: String!
+    companyName: String!
+    aboutCompany: String!
+    companyStartDate: String!
+    location: String!
+    employerEmail: String!
+  ): EmployerProfile
+
+  updateEmployerProfile(
+    id: ID!
+    employerName: String
+    companyName: String
+    aboutCompany: String
+    companyStartDate: String
+    location: String
+  ): EmployerProfile
+
+  createJobListing(
+    jobTitle: String!
+    companyName: String!
+    jobDescription: String!
+    startDate: String!
+    endDate: String!
+    jobType: String!
+    userId: ID!
+    email: String!
+  ): JobListing
+
+  updateJobListing(
+    id: ID!
+    jobTitle: String
+    companyName: String
+    jobDescription: String
+    startDate: String
+    endDate: String
+    jobType: String
+    email: String
+  ): JobListing
+
+  deleteJobListing(id: ID!): String
+
+  applyToJob(application: JobApplicationInput!): JobApplication
+
+  deleteJobApplication(id: ID!): JobApplicationResponse
+}
