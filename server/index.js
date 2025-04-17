@@ -15,7 +15,7 @@ const app = express();
 
 // Set up CORS
 app.use(cors({
-  origin: ["https://capstone-frontend-5ide.onrender.com", "http://localhost:3000"], // Adjust as per your setup
+  origin: [process.env.CORS_ORIGIN, "http://localhost:3000"], // Fetch from environment
   credentials: true,
 }));
 
@@ -32,18 +32,32 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("Error connecting to MongoDB", err));
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req }) => ({ headers: req.headers }),
-  cache: "bounded",
-});
+// Define and start Apollo Server
+const startServer = async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => ({ headers: req.headers }),
+    cache: "bounded",
+  });
 
-await server.start();
-server.applyMiddleware({ app, path: "/graphql" });
+  await server.start();
+  server.applyMiddleware({ app, path: "/graphql" });
 
-// Start the server
-const port = process.env.PORT || 4005;
-app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 GraphQL Server is running at http://localhost:${port}${server.graphqlPath}`);
+  const port = process.env.PORT || 4005;
+
+  // Start the Express server
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`🚀 GraphQL Server is running at http://localhost:${port}${server.graphqlPath}`);
+  });
+};
+
+// Call the async function to start the server
+startServer();
+
+// Gracefully handle shutdowns for MongoDB and the server
+process.on('SIGINT', async () => {
+  console.log("Shutting down server...");
+  await mongoose.connection.close();
+  process.exit(0);
 });
