@@ -13,8 +13,8 @@ import CreateJob from './Components/CreateJobListing';
 import JobSeekerJobListings from './Components/JobSeekerJobListings.js';
 import ResetPassword from './Components/ResetPassword.js';
 import Footer from './Components/Footer';
-import AdminDashboard from './Components/AdminDashboard'; // New Admin Dashboard
-import ViewApplications from './Components/ViewApplications'; // Import the ViewApplications page
+import AdminDashboard from './Components/AdminDashboard';
+import ViewApplications from './Components/ViewApplications';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
@@ -43,57 +43,46 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
           <Route path="/job-seeker-dashboard" element={
             <UserTypeRoute allowedTypes={['jobSeeker']}>
               <JobSeekerDashboard />
             </UserTypeRoute>
           } />
-
           <Route path="/employer-dashboard" element={
             <UserTypeRoute allowedTypes={['employer']}>
               <EmployerDashboard />
             </UserTypeRoute>
           } />
-
           <Route path="/update-profile" element={
             <UserTypeRoute allowedTypes={['jobSeeker']}>
               <JobSeekerProfile />
             </UserTypeRoute>
           } />
-
           <Route path="/manage-employer-profile" element={
             <UserTypeRoute allowedTypes={['employer']}>
               <EmployerProfile />
             </UserTypeRoute>
           } />
-
           <Route path="/create-job" element={
             <UserTypeRoute allowedTypes={['employer']}>
               <CreateJob />
             </UserTypeRoute>
           } />
-
           <Route path="/job-listings" element={
             <ProtectedRoute>
               <JobSeekerJobListings />
             </ProtectedRoute>
           } />
-
-          {/* New View Applications Route */}
           <Route path="/view-applications" element={
             <UserTypeRoute allowedTypes={['employer']}>
               <ViewApplications />
             </UserTypeRoute>
           } />
-
-          {/* New Admin Dashboard Route */}
           <Route path="/admin" element={
             <UserTypeRoute allowedTypes={['admin']}>
               <AdminDashboard />
             </UserTypeRoute>
           } />
-
           <Route path="*" element={<Home />} />
         </Routes>
       </div>
