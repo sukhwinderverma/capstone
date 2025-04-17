@@ -8,7 +8,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'; //
 // Set up Apollo Client
 const client = new ApolloClient({
   // uri: 'http://localhost:4005/graphql',
-uri: 'https://capstone-server1-5a59.onrender.com/graphql',
+uri: 'https://capstone-server2-2qh1.onrender.com/graphql',
 
   cache: new InMemoryCache(),
 });
