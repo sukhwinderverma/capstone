@@ -21,6 +21,8 @@ import {
 } from '@mui/material';
 import { Block, CheckCircle, ArrowBack, ArrowForward } from '@mui/icons-material';
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 const BLOCK_USER = gql`
   mutation BlockUser($id: ID!) {
     blockUser(id: $id) {
@@ -59,6 +61,9 @@ export default function AdminDashboard() {
   const { data, loading, error } = useQuery(GET_USERS, {
     variables: { page: currentPage, limit },
     errorPolicy: 'all',
+    context: {
+      uri: GRAPHQL_URL,
+    },
   });
 
   const [blockUser] = useMutation(BLOCK_USER, {
@@ -82,6 +87,9 @@ export default function AdminDashboard() {
           },
         },
       });
+    },
+    context: {
+      uri: GRAPHQL_URL,
     },
   });
 
