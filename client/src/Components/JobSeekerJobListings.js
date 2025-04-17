@@ -20,6 +20,8 @@ import {
 } from '@mui/material';
 import { gql, useQuery, useMutation } from '@apollo/client';
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 const GET_JOB_LISTINGS = gql`
   query GetJobListings {
     getUserJobs {
@@ -71,14 +73,19 @@ const JobSeekerJobListings = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userEmail = storedUser?.email || "Unknown";
 
-  const { loading: jobLoading, error: jobError, data: jobData } = useQuery(GET_JOB_LISTINGS);
-  const { loading: userLoading, error: userError } = useQuery(GET_USER_EMAIL);
+  const { loading: jobLoading, error: jobError, data: jobData } = useQuery(GET_JOB_LISTINGS, {
+    uri: GRAPHQL_URL
+  });
+  const { loading: userLoading, error: userError } = useQuery(GET_USER_EMAIL, {
+    uri: GRAPHQL_URL
+  });
   const { data: appliedData, loading: appliedLoading } = useQuery(GET_USER_APPLICATIONS, {
     variables: { email: userEmail },
     skip: !userEmail,
+    uri: GRAPHQL_URL
   });
 
-  const [applyToJob] = useMutation(APPLY_TO_JOB);
+  const [applyToJob] = useMutation(APPLY_TO_JOB, { uri: GRAPHQL_URL });
   const [jobListings, setJobListings] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
