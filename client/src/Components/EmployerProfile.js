@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Grid, Paper } from '@mui/material';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery, ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
 
 const CREATE_EMPLOYER_PROFILE = gql`
   mutation CreateEmployerProfile(
@@ -70,6 +72,11 @@ const GET_EMPLOYER_PROFILE = gql`
     }
   }
 `;
+
+const client = new ApolloClient({
+  uri: GRAPHQL_URL,
+  cache: new InMemoryCache(),
+});
 
 export default function EmployerProfile() {
   const [employerName, setEmployerName] = useState('');
@@ -246,86 +253,88 @@ export default function EmployerProfile() {
   };
 
   return (
-    <Box sx={{ padding: '20px', backgroundColor: '#f1f1f1', minHeight: '100vh' }}>
-      <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px', color: '#0277bd', textAlign: 'center' }}>
-        Manage Employer Profile
-      </Typography>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} sm={8} md={6}>
-          <Paper sx={{ padding: '20px', backgroundColor: '#fff', boxShadow: 3, borderRadius: '10px' }}>
-            <Typography variant="h6" sx={{ marginBottom: '20px', color: '#0277bd' }}>
-              Employer Information
-            </Typography>
-            <TextField
-              fullWidth
-              label="Employer Email"
-              variant="outlined"
-              value={employerEmail}
-              InputProps={{
-                readOnly: true,
-              }}
-              sx={{ marginBottom: '15px' }}
-            />
-            <TextField
-              fullWidth
-              label="Employer Name"
-              variant="outlined"
-              value={employerName}
-              onChange={(e) => setEmployerName(e.target.value)}
-              error={!!errors.employerName}
-              helperText={errors.employerName}
-              sx={{ marginBottom: '15px' }}
-            />
-            <TextField
-              fullWidth
-              label="Company Name"
-              variant="outlined"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              error={!!errors.companyName}
-              helperText={errors.companyName}
-              sx={{ marginBottom: '15px' }}
-            />
-            <TextField
-              fullWidth
-              label="About Company"
-              variant="outlined"
-              multiline
-              rows={4}
-              value={aboutCompany}
-              onChange={(e) => setAboutCompany(e.target.value)}
-              error={!!errors.aboutCompany}
-              helperText={errors.aboutCompany}
-              sx={{ marginBottom: '15px' }}
-            />
-            <TextField
-              fullWidth
-              label="Company Start Date"
-              variant="outlined"
-              type="date"
-              value={companyStartDate}
-              onChange={(e) => setCompanyStartDate(e.target.value)}
-              error={!!errors.companyStartDate}
-              helperText={errors.companyStartDate}
-              sx={{ marginBottom: '15px' }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Location"
-              variant="outlined"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              error={!!errors.location}
-              helperText={errors.location}
-              sx={{ marginBottom: '15px' }}
-            />
-            {renderButton()}
-          </Paper>
+    <ApolloProvider client={client}>
+      <Box sx={{ padding: '20px', backgroundColor: '#f1f1f1', minHeight: '100vh' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px', color: '#0277bd', textAlign: 'center' }}>
+          Manage Employer Profile
+        </Typography>
+        <Grid container justifyContent="center">
+          <Grid item xs={12} sm={8} md={6}>
+            <Paper sx={{ padding: '20px', backgroundColor: '#fff', boxShadow: 3, borderRadius: '10px' }}>
+              <Typography variant="h6" sx={{ marginBottom: '20px', color: '#0277bd' }}>
+                Employer Information
+              </Typography>
+              <TextField
+                fullWidth
+                label="Employer Email"
+                variant="outlined"
+                value={employerEmail}
+                InputProps={{
+                  readOnly: true,
+                }}
+                sx={{ marginBottom: '15px' }}
+              />
+              <TextField
+                fullWidth
+                label="Employer Name"
+                variant="outlined"
+                value={employerName}
+                onChange={(e) => setEmployerName(e.target.value)}
+                error={!!errors.employerName}
+                helperText={errors.employerName}
+                sx={{ marginBottom: '15px' }}
+              />
+              <TextField
+                fullWidth
+                label="Company Name"
+                variant="outlined"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                error={!!errors.companyName}
+                helperText={errors.companyName}
+                sx={{ marginBottom: '15px' }}
+              />
+              <TextField
+                fullWidth
+                label="About Company"
+                variant="outlined"
+                multiline
+                rows={4}
+                value={aboutCompany}
+                onChange={(e) => setAboutCompany(e.target.value)}
+                error={!!errors.aboutCompany}
+                helperText={errors.aboutCompany}
+                sx={{ marginBottom: '15px' }}
+              />
+              <TextField
+                fullWidth
+                label="Company Start Date"
+                variant="outlined"
+                type="date"
+                value={companyStartDate}
+                onChange={(e) => setCompanyStartDate(e.target.value)}
+                error={!!errors.companyStartDate}
+                helperText={errors.companyStartDate}
+                sx={{ marginBottom: '15px' }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                fullWidth
+                label="Location"
+                variant="outlined"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                error={!!errors.location}
+                helperText={errors.location}
+                sx={{ marginBottom: '15px' }}
+              />
+              {renderButton()}
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </ApolloProvider>
   );
 }
