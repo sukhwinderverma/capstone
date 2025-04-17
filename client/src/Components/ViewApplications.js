@@ -20,6 +20,8 @@ import {
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Mail as MailIcon } from '@mui/icons-material';
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 const GET_JOB_APPLICATIONS = gql`
   query GetAllJobApplications {
     getAllJobApplications {
@@ -89,7 +91,10 @@ const ViewApplications = () => {
     error: appsError,
     data: appsData,
     refetch,
-  } = useQuery(GET_JOB_APPLICATIONS);
+  } = useQuery(GET_JOB_APPLICATIONS, {
+    fetchPolicy: "network-only",
+    uri: GRAPHQL_URL
+  });
 
   const [jobSeekerProfiles, setJobSeekerProfiles] = useState({});
   const [loadingProfiles, setLoadingProfiles] = useState(true);
@@ -101,6 +106,7 @@ const ViewApplications = () => {
 
   const { refetch: refetchJobSeekerProfile } = useQuery(GET_JOB_SEEKER_PROFILE, {
     skip: true,
+    uri: GRAPHQL_URL
   });
 
   const [deleteJobApplication] = useMutation(DELETE_JOB_APPLICATION, {
@@ -131,6 +137,7 @@ const ViewApplications = () => {
       setDeleteError(error.message);
       setOpenSnackbar(true);
     },
+    uri: GRAPHQL_URL
   });
 
   useEffect(() => {
@@ -347,24 +354,23 @@ const ViewApplications = () => {
                           ))}
                         </Box>
                       ) : (
-                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                          ⚠️ No profile found for <strong>{application.jobSeekerEmail}</strong>.
+                        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 2 }}>
+                          Job seeker profile is not available.
                         </Typography>
                       )}
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                      <IconButton
+                      <Button
+                        size="small"
                         color="primary"
-                        size="small"
-                        onClick={() =>
-                          handleAcceptClick(application.jobSeekerEmail, application.job.jobTitle)
-                        }
+                        onClick={() => handleAcceptClick(application.jobSeekerEmail, application.job?.jobTitle)}
+                        startIcon={<MailIcon />}
                       >
-                        <MailIcon />
-                      </IconButton>
+                        Respond to Application
+                      </Button>
                       <IconButton
-                        color="secondary"
-                        size="small"
+                        edge="end"
+                        color="error"
                         onClick={() => handleDeleteClick(application.id)}
                       >
                         <DeleteIcon />
@@ -380,21 +386,24 @@ const ViewApplications = () => {
 
       <Snackbar
         open={openSnackbar}
-        onClose={() => setOpenSnackbar(false)}
-        message={snackbarMessage || deleteError}
         autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        message={snackbarMessage}
       />
 
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>Are you sure you want to delete this application?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+          <Button onClick={() => setDeleteDialogOpen(false)} color="secondary">
             Cancel
           </Button>
-          <Button onClick={confirmDelete} color="secondary">
+          <Button onClick={confirmDelete} color="primary">
             Delete
           </Button>
         </DialogActions>
