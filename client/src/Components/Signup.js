@@ -18,6 +18,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Person, Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 
+const GRAPHQL_URL = "https://capstone-server2-2qh1.onrender.com/graphql";
+
 export default function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,7 +52,7 @@ export default function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:4005/graphql", {
+      const response = await fetch(GRAPHQL_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -317,8 +319,6 @@ export default function Signup() {
         onClose={handleClose}
         message={message}
       />
-
-      
     </Box>
   );
 }
