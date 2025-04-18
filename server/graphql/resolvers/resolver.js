@@ -67,7 +67,6 @@ export const resolvers = {
       }
     },
 
-    // Get all job listings with pagination and an optional email filter
     getJobListings: async (_, { page = 1, limit = 10, email = "" }) => {
       try {
         const skip = (page - 1) * limit;
@@ -76,10 +75,8 @@ export const resolvers = {
         let jobListings;
         
         if (email) {
-          // If email is provided, filter by email to get the employer's job listings
           jobListings = await JobListing.find({ email }).skip(skip).limit(limit);
         } else {
-          // Otherwise, fetch all job listings
           jobListings = await JobListing.find().skip(skip).limit(limit);
         }
 
