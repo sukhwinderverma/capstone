@@ -20,17 +20,16 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use(async (req, res, next) => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  next();
-});
-
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "graphql/schemas/schema.graphql"),
   "utf-8"
 );
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 10000
+})
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("Error connecting to MongoDB", err));
 
