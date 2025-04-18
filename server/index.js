@@ -21,7 +21,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use(async (req, res, next) => {
-  await new Promise(resolve => setTimeout(resolve, 60000));
+  await new Promise(resolve => setTimeout(resolve, 500));
   next();
 });
 
